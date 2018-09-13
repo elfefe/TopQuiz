@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">TopQuiz</string>
+    <string name="Greeting_main">Welcome! What\'s your name?</string>
+    <string name="Yourname_main">Enter your name !</string>
+    <string name="Start_main">Let\'s play</string>
+    <string name="Rank_main">Ranking</string>
+    <string name="Player_ranking">Player</string>
+    <string name="Rankin_ranking">Ranking</string>
+    <string name="Score_ranking">score</string>
+    <string name="Question_game">Question?</string>
+    <string name="Answer1_game">Answer1</string>
+    <string name="Answer2_game">Answer2</string>
+    <string name="Answer3_game">Answer3</string>
+    <string name="Answer4_game">Answer4</string>
+</resources>
