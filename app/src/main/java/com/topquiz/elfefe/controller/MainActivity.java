@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private SharedPreferences mPreferences;
+    private SharedPreferences[] mRankPreferences;
 
     public static final String PREF_KEY_SCORE = "PREF_KEY_SCORE";
     public static final String PREF_KEY_FIRSTNAME = "PREF_KEY_FIRSTNAME";
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         mNameInput = (EditText) findViewById(R.id.activity_main_name_input);
         mPlayButton = (Button) findViewById(R.id.activity_main_play_btn);
         mRankButton = (Button) findViewById(R.id.activity_main_rank_btn);
+
+        mRankButton.setAlpha(0);
+        mRankButton.setEnabled(false);
 
         mPlayButton.setEnabled(false);
 
@@ -83,11 +87,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(gameActivityIntent, GAME_ACTIVITY_REQUEST_CODE);
             }
         });
+
         mRankButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent rankActivityIntent = new Intent(MainActivity.this, RankActivity.class);
-                startActivityForResult(rankActivityIntent, RANK_ACTIVITY_REQUEST_CODE);
+                startActivity(rankActivityIntent);
 
             }
         });
@@ -95,16 +100,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mRankPreferences = new SharedPreferences[5];
         if (GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode) {
             // Fetch the score from the Intent
             int score = data.getIntExtra(GameActivity.BUNDLE_EXTRA_SCORE, 0);
 
             mPreferences.edit().putInt(PREF_KEY_SCORE, score).apply();
 
-            if (score == 0)
-                mRankButton.setEnabled(false);
-            else
-                mRankButton.setEnabled(true);
+
+
 
             greetUser();
         }
@@ -123,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
             mNameInput.setText(firstname);
             mNameInput.setSelection(firstname.length());
             mPlayButton.setEnabled(true);
+            mRankButton.setAlpha(1);
+            mRankButton.setEnabled(true);
         }
     }
 
