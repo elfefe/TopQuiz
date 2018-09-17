@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.GameActivity"></activity>
+        <activity android:name=".controller.GameActivity" />
+        <activity android:name=".controller.RankActivity" />
     </application>
 
 </manifest>

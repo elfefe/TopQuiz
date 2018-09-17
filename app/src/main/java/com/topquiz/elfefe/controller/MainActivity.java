@@ -24,11 +24,11 @@ public class MainActivity extends AppCompatActivity {
     private Button mRankButton;
     private User mUser;
 
-    public static final int RANK_ACTIVITY_REQUEST_CODE = 13;
+    public static final String RANK_KEY_FIRSTNAME = "RANK_KEY_FIRSTNAME";
+    public static final String RANK_KEY_SCORE = "RANK_KEY_SCORE";
 
     public static final int GAME_ACTIVITY_REQUEST_CODE = 42;
     private SharedPreferences mPreferences;
-    private SharedPreferences[] mRankPreferences;
 
     public static final String PREF_KEY_SCORE = "PREF_KEY_SCORE";
     public static final String PREF_KEY_FIRSTNAME = "PREF_KEY_FIRSTNAME";
@@ -43,15 +43,12 @@ public class MainActivity extends AppCompatActivity {
 
         mUser = new User();
 
-        mPreferences = getPreferences(MODE_PRIVATE);
+        mPreferences = this.getPreferences(MODE_PRIVATE);
 
         mGreetingText = (TextView) findViewById(R.id.activity_main_greeting_txt);
         mNameInput = (EditText) findViewById(R.id.activity_main_name_input);
         mPlayButton = (Button) findViewById(R.id.activity_main_play_btn);
         mRankButton = (Button) findViewById(R.id.activity_main_rank_btn);
-
-        mRankButton.setAlpha(0);
-        mRankButton.setEnabled(false);
 
         mPlayButton.setEnabled(false);
 
@@ -88,37 +85,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mRankButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent rankActivityIntent = new Intent(MainActivity.this, RankActivity.class);
-                startActivity(rankActivityIntent);
 
-            }
-        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mRankPreferences = new SharedPreferences[5];
         if (GAME_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode) {
             // Fetch the score from the Intent
             int score = data.getIntExtra(GameActivity.BUNDLE_EXTRA_SCORE, 0);
 
             mPreferences.edit().putInt(PREF_KEY_SCORE, score).apply();
 
-
-
-
             greetUser();
+
         }
     }
 
     private void greetUser() {
-        String firstname = mPreferences.getString(PREF_KEY_FIRSTNAME, null);
+        final String firstname = mPreferences.getString(PREF_KEY_FIRSTNAME, null);
 
         if (null != firstname) {
-            int score = mPreferences.getInt(PREF_KEY_SCORE, 0);
+            final int score = mPreferences.getInt(PREF_KEY_SCORE, 0);
 
             String fulltext = "Welcome back, " + firstname
                     + "!\nYour last score was " + score
@@ -127,8 +114,33 @@ public class MainActivity extends AppCompatActivity {
             mNameInput.setText(firstname);
             mNameInput.setSelection(firstname.length());
             mPlayButton.setEnabled(true);
+        }
+    }
+
+    private void sendRankingData(){
+        final String rankName = mPreferences.getString(PREF_KEY_FIRSTNAME, null);
+        final int rankScore = mPreferences.getInt(PREF_KEY_SCORE, 0);
+
+        out.println(rankName+rankScore);
+
+        if (rankName != null) {
             mRankButton.setAlpha(1);
             mRankButton.setEnabled(true);
+            mRankButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    final Intent rankActivityIntent = new Intent(MainActivity.this, RankActivity.class);
+
+                    rankActivityIntent.putExtra(RANK_KEY_FIRSTNAME,rankName);
+                    rankActivityIntent.putExtra(RANK_KEY_SCORE,rankScore);
+
+                    startActivity(rankActivityIntent);
+                }
+            });
+        }else{
+            mRankButton.setAlpha(0);
+            mRankButton.setEnabled(false);
         }
     }
 
@@ -144,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         out.println("MainActivity::onResume()");
+
+        sendRankingData();
     }
 
     @Override
