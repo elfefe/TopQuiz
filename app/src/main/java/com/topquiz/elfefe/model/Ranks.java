@@ -1,16 +1,11 @@
 package com.topquiz.elfefe.model;
 
-import android.widget.TextView;
-
 public class Ranks {
-    private TextView mPlayer;
-    private TextView mRank;
-    private TextView mScore;
+    public String mPlayer;
+    public int mScore;
 
-
-    public Ranks(TextView player, TextView rank, TextView score) {
+    public Ranks(String player, int score) {
         mPlayer = player;
-        mRank = rank;
         mScore = score;
     }
 }
