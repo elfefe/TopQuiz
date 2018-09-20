@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TableRow;
@@ -15,7 +14,12 @@ import com.topquiz.elfefe.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_FIRSTNAME;
 import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_SCORE;
@@ -23,24 +27,37 @@ import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_SCORE;
 public class RankActivity extends AppCompatActivity {
 
     private TableRow mTableRow;
-    private TextView mPlayer,mRank,mScore;
-    private Button mBack;
+    private TextView mPlayer,mScore;
+    private Button mBack, mAlphabet, mValeur;
 
     String name;
-    String[] scores= new String[5];
     int valueScore;
 
     private List<String> KEY_PLAYER = new ArrayList<>(5);
     private List<String> KEY_SCORE = new ArrayList<>(5);
 
-    private TextView[] mPlayerAll = new TextView[5],
-                       mScoreAll = new TextView[5];
+    private SharedPreferences mPlayerSettings;
+    private SharedPreferences mScoreSettings;
 
-    private List<Integer> mScoreData = new ArrayList<>();
-    private List<String> mPlayerData = new ArrayList<>(5);
+    private HashMap<String,String> resultat;
+    private Iterator<String> playerNames;
+    private Iterator<String> scoreNames;
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences mSetting;
+    private SortedSet<String> keys;
+    private List<String> mapValues;
+
+    private TextView mPlayer0;
+    private TextView mPlayer1;
+    private TextView mPlayer2;
+    private TextView mPlayer3;
+    private TextView mPlayer4;
+
+    private TextView mScore0;
+    private TextView mScore1;
+    private TextView mScore2;
+    private TextView mScore3;
+    private TextView mScore4;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -49,28 +66,29 @@ public class RankActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_rank);
 
-        mPreferences = this.getSharedPreferences("PLAYER_KEY",MODE_PRIVATE);
-        mSetting = this.getSharedPreferences("SCORE_KEY",MODE_PRIVATE);
+        mPlayerSettings = this.getSharedPreferences("PLAYER_KEY",MODE_PRIVATE);
+        mScoreSettings = this.getSharedPreferences("SCORE_KEY",MODE_PRIVATE);
 
         setPlayerScorePreference();
 
         mTableRow = (TableRow) findViewById(R.id.activity_rank_trow);
         mPlayer = (TextView) findViewById(R.id.activity_rank_player_txt);
-        mRank = (TextView) findViewById(R.id.activity_rank_rank_txt);
         mScore = (TextView) findViewById(R.id.activity_rank_score_txt);
         mBack = (Button) findViewById(R.id.activity_rank_back_btn);
+        mAlphabet = (Button) findViewById(R.id.activity_rank_alphabet_btn);
+        mValeur = (Button) findViewById(R.id.activity_rank_valeur_btn);
 
-        mPlayerAll[0] = (TextView) findViewById(R.id.activity_rank_player1_txt);
-        mPlayerAll[1] = (TextView) findViewById(R.id.activity_rank_player2_txt);
-        mPlayerAll[2] = (TextView) findViewById(R.id.activity_rank_player3_txt);
-        mPlayerAll[3] = (TextView) findViewById(R.id.activity_rank_player4_txt);
-        mPlayerAll[4] = (TextView) findViewById(R.id.activity_rank_player5_txt);
+        mPlayer0 = (TextView) findViewById(R.id.activity_rank_player1_txt);
+        mPlayer1 = (TextView) findViewById(R.id.activity_rank_player2_txt);
+        mPlayer2 = (TextView) findViewById(R.id.activity_rank_player3_txt);
+        mPlayer3 = (TextView) findViewById(R.id.activity_rank_player4_txt);
+        mPlayer4 = (TextView) findViewById(R.id.activity_rank_player5_txt);
 
-        mScoreAll[0] = (TextView) findViewById(R.id.activity_rank_score1_txt);
-        mScoreAll[1] = (TextView) findViewById(R.id.activity_rank_score2_txt);
-        mScoreAll[2] = (TextView) findViewById(R.id.activity_rank_score3_txt);
-        mScoreAll[3] = (TextView) findViewById(R.id.activity_rank_score4_txt);
-        mScoreAll[4] = (TextView) findViewById(R.id.activity_rank_score5_txt);
+        mScore0 = (TextView) findViewById(R.id.activity_rank_score1_txt);
+        mScore1 = (TextView) findViewById(R.id.activity_rank_score2_txt);
+        mScore2 = (TextView) findViewById(R.id.activity_rank_score3_txt);
+        mScore3 = (TextView) findViewById(R.id.activity_rank_score4_txt);
+        mScore4 = (TextView) findViewById(R.id.activity_rank_score5_txt);
 
 
         backToMain();
@@ -79,80 +97,38 @@ public class RankActivity extends AppCompatActivity {
         name = getIntent().getStringExtra(RANK_KEY_FIRSTNAME);
         valueScore = getIntent().getIntExtra(RANK_KEY_SCORE, 0);
 
-        set();
-
-//        scores = new String[]{
-//                mScoreData.get(0)+"",
-//                mScoreData.get(1)+"",
-//                mScoreData.get(2)+"",
-//                mScoreData.get(3)+"",
-//                mScoreData.get(4)+"",
-//        };
-
-        mPlayerAll[0].setText(mPlayerData.get(0));
-        mPlayerAll[1].setText(mPlayerData.get(1));
-        mPlayerAll[2].setText(mPlayerData.get(2));
-        mPlayerAll[3].setText(mPlayerData.get(3));
-        mPlayerAll[4].setText(mPlayerData.get(4));
-
-        mScoreAll[0].setText(scores[0]);
-        mScoreAll[1].setText(scores[1]);
-        mScoreAll[2].setText(scores[2]);
-        mScoreAll[3].setText(scores[3]);
-        mScoreAll[4].setText(scores[4]);
-
-    }
-
-    public void set(){
-        boolean verification = true;
-            for (int x = 0; x < mPreferences.getAll().size(); x++) {
-                if ((mPreferences.getString(KEY_PLAYER.get(x), null).equals(name)) && (verification)) {
-                    mPreferences.edit().putString(KEY_PLAYER.get(x), name).apply();
-                    mSetting.edit().putInt(KEY_SCORE.get(x),valueScore).apply();
-                    verification = false;
-                } else if ((mPreferences.getString(KEY_PLAYER.get(x), null).equals("")) && (verification)) {
-                    mPreferences.edit().putString(KEY_PLAYER.get(x), name).apply();
-                    mSetting.edit().putInt(KEY_SCORE.get(x),valueScore).apply();
-                    verification = false;
-                }
-            }
-
-            System.out.println(mPreferences.getString(KEY_PLAYER.get(0), null));
+        resultat = new HashMap<>();
 
 
-        mScoreData.add(mSetting.getInt(KEY_SCORE.get(0),-1));
-        mScoreData.add(mSetting.getInt(KEY_SCORE.get(1),-1));
-        mScoreData.add(mSetting.getInt(KEY_SCORE.get(2),-1));
-        mScoreData.add(mSetting.getInt(KEY_SCORE.get(3),-1));
-        mScoreData.add(mSetting.getInt(KEY_SCORE.get(4),-1));
+        for (int x=0;x<mPlayerSettings.getAll().size();x++){
+            String playerName = mPlayerSettings.getString(KEY_PLAYER.get(x),"");
+            Integer name = mScoreSettings.getInt(KEY_SCORE.get(x),0);
+            String scoreName = name.toString();
 
-
-//        Collections.sort(mScoreData);
-
-        mPlayerData.add(mScoreData.indexOf(mSetting.getInt(KEY_SCORE.get(0),-1)), mPreferences.getString(KEY_PLAYER.get(0), " "));
-        mPlayerData.add(mScoreData.indexOf(mSetting.getInt(KEY_SCORE.get(1),-1)), mPreferences.getString(KEY_PLAYER.get(1), " "));
-        mPlayerData.add(mScoreData.indexOf(mSetting.getInt(KEY_SCORE.get(2),-1)), mPreferences.getString(KEY_PLAYER.get(2), " "));
-        mPlayerData.add(mScoreData.indexOf(mSetting.getInt(KEY_SCORE.get(3),-1)), mPreferences.getString(KEY_PLAYER.get(3), " "));
-        mPlayerData.add(mScoreData.indexOf(mSetting.getInt(KEY_SCORE.get(4),-1)), mPreferences.getString(KEY_PLAYER.get(4), " "));
-
-
-        for (int x=0;x<mScoreData.size();x++){
-            if (mScoreData.get(x) == -1)
-                scores[x] = "";
-            else
-                scores[x] = mScoreData.get(x).toString();
-
+            resultat.put(playerName,scoreName);
         }
-            
 
-        System.out.println("Nombre de joueur "+mPlayerData.size()+mPlayerData.subList(0,mPlayerData.size()));
-        System.out.println("Nombre de Score "+mScoreData.size()+mScoreData.subList(0,mScoreData.size()));
+        playerNames = resultat.keySet().iterator();
+        scoreNames = resultat.values().iterator();
 
-        System.out.println( mPreferences.getString(KEY_PLAYER.get(0),null)+
-                mPreferences.getString(KEY_PLAYER.get(1),null)+
-                mPreferences.getString(KEY_PLAYER.get(2),null)+
-                mPreferences.getString(KEY_PLAYER.get(3),null)+
-                mPreferences.getString(KEY_PLAYER.get(4),null));
+        keys = new TreeSet<>(resultat.keySet());
+        mapValues = new ArrayList<>(resultat.values());
+
+
+
+        mPlayer0.setText(playerNames.next());
+        mPlayer1.setText(playerNames.next());
+        mPlayer2.setText(playerNames.next());
+        mPlayer3.setText(playerNames.next());
+        mPlayer4.setText(playerNames.next());
+
+        mScore0.setText(scoreNames.next());
+        mScore1.setText(scoreNames.next());
+        mScore2.setText(scoreNames.next());
+        mScore3.setText(scoreNames.next());
+        mScore4.setText(scoreNames.next());
+
+
     }
 
     private void setPlayerScorePreference(){
@@ -168,15 +144,26 @@ public class RankActivity extends AppCompatActivity {
         this.KEY_SCORE.add(3,"INTENT_SCORE_KEY4");
         this.KEY_SCORE.add(4,"INTENT_SCORE_KEY5");
 
-        if (mPreferences.getAll().size() == 0) {
-            mPreferences.edit().putString(KEY_PLAYER.get(0), " ").apply();
-            mPreferences.edit().putString(KEY_PLAYER.get(1), " ").apply();
-            mPreferences.edit().putString(KEY_PLAYER.get(2), " ").apply();
-            mPreferences.edit().putString(KEY_PLAYER.get(3), " ").apply();
-            mPreferences.edit().putString(KEY_PLAYER.get(4), " ").apply();
+        if (mPlayerSettings.getAll().size() == 0) {
+            mPlayerSettings.edit().putString(KEY_PLAYER.get(0), " ").apply();
+            mPlayerSettings.edit().putString(KEY_PLAYER.get(1), " ").apply();
+            mPlayerSettings.edit().putString(KEY_PLAYER.get(2), " ").apply();
+            mPlayerSettings.edit().putString(KEY_PLAYER.get(3), " ").apply();
+            mPlayerSettings.edit().putString(KEY_PLAYER.get(4), " ").apply();
+
+            mScoreSettings.edit().putInt(KEY_SCORE.get(0), 0).apply();
+            mScoreSettings.edit().putInt(KEY_SCORE.get(1), 0).apply();
+            mScoreSettings.edit().putInt(KEY_SCORE.get(2), 0).apply();
+            mScoreSettings.edit().putInt(KEY_SCORE.get(3), 0).apply();
+            mScoreSettings.edit().putInt(KEY_SCORE.get(4), 0).apply();
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("GameActivity::onResume()");
+    }
 
     public void backToMain(){
         mBack.setOnClickListener(new View.OnClickListener() {
