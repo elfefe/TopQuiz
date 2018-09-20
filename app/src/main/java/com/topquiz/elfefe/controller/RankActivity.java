@@ -1,33 +1,29 @@
 package com.topquiz.elfefe.controller;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TableRow;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.topquiz.elfefe.R;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import static android.R.layout.simple_list_item_1;
 import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_FIRSTNAME;
 import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_SCORE;
 
 public class RankActivity extends AppCompatActivity {
 
-    private TableRow mTableRow;
-    private TextView mPlayer,mScore;
+//    private TableRow mTableRow;
+//    private TextView mPlayer,mScore;
     private Button mBack, mAlphabet, mValeur;
 
     String name;
@@ -46,52 +42,56 @@ public class RankActivity extends AppCompatActivity {
     private SortedSet<String> keys;
     private List<String> mapValues;
 
-    private TextView mPlayer0;
-    private TextView mPlayer1;
-    private TextView mPlayer2;
-    private TextView mPlayer3;
-    private TextView mPlayer4;
+    private ListView mRanking;
 
-    private TextView mScore0;
-    private TextView mScore1;
-    private TextView mScore2;
-    private TextView mScore3;
-    private TextView mScore4;
+//    private TextView mPlayer0;
+//    private TextView mPlayer1;
+//    private TextView mPlayer2;
+//    private TextView mPlayer3;
+//    private TextView mPlayer4;
+//
+//    private TextView mScore0;
+//    private TextView mScore1;
+//    private TextView mScore2;
+//    private TextView mScore3;
+//    private TextView mScore4;
 
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_rank);
 
+
         mPlayerSettings = this.getSharedPreferences("PLAYER_KEY",MODE_PRIVATE);
         mScoreSettings = this.getSharedPreferences("SCORE_KEY",MODE_PRIVATE);
 
+        keys = new TreeSet<>();
+        mapValues = new ArrayList<>();
+
         setPlayerScorePreference();
 
-        mTableRow = (TableRow) findViewById(R.id.activity_rank_trow);
-        mPlayer = (TextView) findViewById(R.id.activity_rank_player_txt);
-        mScore = (TextView) findViewById(R.id.activity_rank_score_txt);
-        mBack = (Button) findViewById(R.id.activity_rank_back_btn);
-        mAlphabet = (Button) findViewById(R.id.activity_rank_alphabet_btn);
-        mValeur = (Button) findViewById(R.id.activity_rank_valeur_btn);
+        mRanking = findViewById(R.id.listview);
+        mBack = findViewById(R.id.activity_rank_back_btn);
+        mAlphabet = findViewById(R.id.activity_rank_alphabet_btn);
+        mValeur = findViewById(R.id.activity_rank_valeur_btn);
 
-        mPlayer0 = (TextView) findViewById(R.id.activity_rank_player1_txt);
-        mPlayer1 = (TextView) findViewById(R.id.activity_rank_player2_txt);
-        mPlayer2 = (TextView) findViewById(R.id.activity_rank_player3_txt);
-        mPlayer3 = (TextView) findViewById(R.id.activity_rank_player4_txt);
-        mPlayer4 = (TextView) findViewById(R.id.activity_rank_player5_txt);
+//        mTableRow = (TableRow) findViewById(R.id.activity_rank_trow);
+//        mPlayer = (TextView) findViewById(R.id.activity_rank_player_txt);
+//        mScore = (TextView) findViewById(R.id.activity_rank_score_txt);
+//
+//        mPlayer0 = (TextView) findViewById(R.id.activity_rank_player1_txt);
+//        mPlayer1 = (TextView) findViewById(R.id.activity_rank_player2_txt);
+//        mPlayer2 = (TextView) findViewById(R.id.activity_rank_player3_txt);
+//        mPlayer3 = (TextView) findViewById(R.id.activity_rank_player4_txt);
+//        mPlayer4 = (TextView) findViewById(R.id.activity_rank_player5_txt);
+//
+//        mScore0 = (TextView) findViewById(R.id.activity_rank_score1_txt);
+//        mScore1 = (TextView) findViewById(R.id.activity_rank_score2_txt);
+//        mScore2 = (TextView) findViewById(R.id.activity_rank_score3_txt);
+//        mScore3 = (TextView) findViewById(R.id.activity_rank_score4_txt);
+//        mScore4 = (TextView) findViewById(R.id.activity_rank_score5_txt);
 
-        mScore0 = (TextView) findViewById(R.id.activity_rank_score1_txt);
-        mScore1 = (TextView) findViewById(R.id.activity_rank_score2_txt);
-        mScore2 = (TextView) findViewById(R.id.activity_rank_score3_txt);
-        mScore3 = (TextView) findViewById(R.id.activity_rank_score4_txt);
-        mScore4 = (TextView) findViewById(R.id.activity_rank_score5_txt);
-
-
-        backToMain();
 
 
         name = getIntent().getStringExtra(RANK_KEY_FIRSTNAME);
@@ -100,7 +100,7 @@ public class RankActivity extends AppCompatActivity {
         resultat = new HashMap<>();
 
 
-        for (int x=0;x<mPlayerSettings.getAll().size();x++){
+        for (int x=0;x<mPlayerSettings.getAll().size()-1;x++){
             String playerName = mPlayerSettings.getString(KEY_PLAYER.get(x),"");
             Integer name = mScoreSettings.getInt(KEY_SCORE.get(x),0);
             String scoreName = name.toString();
@@ -111,24 +111,49 @@ public class RankActivity extends AppCompatActivity {
         playerNames = resultat.keySet().iterator();
         scoreNames = resultat.values().iterator();
 
-        keys = new TreeSet<>(resultat.keySet());
-        mapValues = new ArrayList<>(resultat.values());
+        keys.addAll(resultat.keySet());
+        mapValues.addAll(resultat.values());
+
+//        mAlphabet.setOnClickListener(v -> playerNames = keys.iterator());
+//        mValeur.setOnClickListener(v -> Collections.sort(mapValues));
+
+        ArrayAdapter<String> mPlayer = new ArrayAdapter<>(this, simple_list_item_1, mapValues);
 
 
+        mRanking.setAdapter(mPlayer);
 
-        mPlayer0.setText(playerNames.next());
-        mPlayer1.setText(playerNames.next());
-        mPlayer2.setText(playerNames.next());
-        mPlayer3.setText(playerNames.next());
-        mPlayer4.setText(playerNames.next());
-
-        mScore0.setText(scoreNames.next());
-        mScore1.setText(scoreNames.next());
-        mScore2.setText(scoreNames.next());
-        mScore3.setText(scoreNames.next());
-        mScore4.setText(scoreNames.next());
-
-
+        backToMain();
+//        if (playerNames.hasNext())
+//        mPlayer0.setText(playerNames.next());
+//        else
+//            mPlayer0.setText("");
+//        if (playerNames.hasNext())
+//        mPlayer1.setText(playerNames.next());
+//        else
+//            mPlayer1.setText("");
+//        if (playerNames.hasNext())
+//        mPlayer2.setText(playerNames.next());
+//        else
+//            mPlayer2.setText("");
+//        if (playerNames.hasNext())
+//        mPlayer3.setText(playerNames.next());
+//        else
+//            mPlayer3.setText("");
+//        if (playerNames.hasNext())
+//        mPlayer4.setText(playerNames.next());
+//        else
+//            mPlayer4.setText("");
+//
+//        if (scoreNames.hasNext())
+//        mScore0.setText(scoreNames.next());
+//        if (scoreNames.hasNext())
+//        mScore1.setText(scoreNames.next());
+//        if (scoreNames.hasNext())
+//        mScore2.setText(scoreNames.next());
+//        if (scoreNames.hasNext())
+//        mScore3.setText(scoreNames.next());
+//        if (scoreNames.hasNext())
+//        mScore4.setText(scoreNames.next());
     }
 
     private void setPlayerScorePreference(){
@@ -163,14 +188,10 @@ public class RankActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         System.out.println("GameActivity::onResume()");
+
     }
 
     public void backToMain(){
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        mBack.setOnClickListener(v -> finish());
     }
 }

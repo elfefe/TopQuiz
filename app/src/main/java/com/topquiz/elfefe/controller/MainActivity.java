@@ -71,18 +71,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String firstname = mNameInput.getText().toString();
-                mUser.setFirstname(firstname);
+        mPlayButton.setOnClickListener(v -> {
+            String firstname = mNameInput.getText().toString();
+            mUser.setFirstname(firstname);
 
-                mPreferences.edit().putString(PREF_KEY_FIRSTNAME, mUser.getFirstname()).apply();
+            mPreferences.edit().putString(PREF_KEY_FIRSTNAME, mUser.getFirstname()).apply();
 
-                // User clicked the button
-                Intent gameActivityIntent = new Intent(MainActivity.this, GameActivity.class);
-                startActivityForResult(gameActivityIntent, GAME_ACTIVITY_REQUEST_CODE);
-            }
+            // User clicked the button
+            Intent gameActivityIntent = new Intent(MainActivity.this, GameActivity.class);
+            startActivityForResult(gameActivityIntent, GAME_ACTIVITY_REQUEST_CODE);
         });
 
 
@@ -121,22 +118,17 @@ public class MainActivity extends AppCompatActivity {
         final String rankName = mPreferences.getString(PREF_KEY_FIRSTNAME, null);
         final int rankScore = mPreferences.getInt(PREF_KEY_SCORE, 0);
 
-        out.println(rankName+rankScore);
-
         if (rankName != null) {
             mRankButton.setAlpha(1);
             mRankButton.setEnabled(true);
-            mRankButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            mRankButton.setOnClickListener(v -> {
 
-                    final Intent rankActivityIntent = new Intent(MainActivity.this, RankActivity.class);
+                final Intent rankActivityIntent = new Intent(MainActivity.this, RankActivity.class);
 
-                    rankActivityIntent.putExtra(RANK_KEY_FIRSTNAME,rankName);
-                    rankActivityIntent.putExtra(RANK_KEY_SCORE,rankScore);
+                rankActivityIntent.putExtra(RANK_KEY_FIRSTNAME,rankName);
+                rankActivityIntent.putExtra(RANK_KEY_SCORE,rankScore);
 
-                    startActivity(rankActivityIntent);
-                }
+                startActivity(rankActivityIntent);
             });
         }else{
             mRankButton.setAlpha(0);

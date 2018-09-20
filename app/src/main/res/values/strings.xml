@@ -13,4 +13,6 @@
     <string name="Answer3_game">Answer3</string>
     <string name="Answer4_game">Answer4</string>
     <string name="Back_ranking">Back</string>
+    <string name="Alphabet_ranking">tri par valeurs</string>
+    <string name="Valeur_ranking">tri par alphabet</string>
 </resources>
