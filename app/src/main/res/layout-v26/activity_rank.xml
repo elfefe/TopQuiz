@@ -6,87 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_gravity="center">
 
-        <TableRow
-            android:id="@+id/activity_rank_trow"
-            android:layout_margin="10dp">
-                <TextView
-                    android:id="@+id/activity_rank_player_txt"
-                    android:text="@string/Player_ranking"
-                    android:layout_margin="10dp"/>
-                <TextView
-                    android:id="@+id/activity_rank_score_txt"
-                    android:text="@string/Score_ranking"
-                    android:layout_margin="10dp" />
-        </TableRow>
-        <TableRow
-            android:id="@+id/activity_rank_trow1"
-            android:layout_margin="10dp">
-            <TextView
-                android:id="@+id/activity_rank_player1_txt"
-                android:text="@string/Player_ranking"
-                android:layout_margin="10dp"/>
-            <TextView
-                android:id="@+id/activity_rank_score1_txt"
-                android:text="@string/Score_ranking"
-                android:layout_margin="10dp" />
-        </TableRow>
-        <TableRow
-            android:id="@+id/activity_rank_trow2"
-            android:layout_margin="10dp">
-            <TextView
-                android:id="@+id/activity_rank_player2_txt"
-                android:text="@string/Player_ranking"
-                android:layout_margin="10dp"/>
-            <TextView
-                android:id="@+id/activity_rank_score2_txt"
-                android:text="@string/Score_ranking"
-                android:layout_margin="10dp" />
-        </TableRow>
-        <TableRow
-            android:id="@+id/activity_rank_trow3"
-            android:layout_margin="10dp">
-            <TextView
-                android:id="@+id/activity_rank_player3_txt"
-                android:text="@string/Player_ranking"
-                android:layout_margin="10dp"/>
-            <TextView
-                android:id="@+id/activity_rank_score3_txt"
-                android:text="@string/Score_ranking"
-                android:layout_margin="10dp" />
-        </TableRow>
-        <TableRow
-            android:id="@+id/activity_rank_trow4"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp">
-            <TextView
-                android:id="@+id/activity_rank_player4_txt"
-                android:text="@string/Player_ranking"
-                android:layout_margin="10dp"/>
-            <TextView
-                android:id="@+id/activity_rank_score4_txt"
-                android:text="@string/Score_ranking"
-                android:layout_margin="10dp" />
-        </TableRow>
-        <TableRow
-            android:id="@+id/activity_rank_trow5"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp">
-            <TextView
-                android:id="@+id/activity_rank_player5_txt"
-                android:text="@string/Player_ranking"
-                android:layout_margin="10dp"/>
-            <TextView
-                android:id="@+id/activity_rank_score5_txt"
-                android:text="@string/Score_ranking"
-                android:layout_margin="10dp" />
-        </TableRow>
-    </TableLayout>
+
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -104,7 +32,8 @@
             android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:padding="30dp"
-            android:text="@string/Back_ranking" />
+            android:text="@string/Back_ranking"
+            tools:ignore="NestedWeights" />
 
         <Button
             android:id="@+id/activity_rank_valeur_btn"

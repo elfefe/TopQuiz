@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.topquiz.elfefe.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,9 +63,10 @@ public class RankActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_rank);
 
-
         mPlayerSettings = this.getSharedPreferences("PLAYER_KEY",MODE_PRIVATE);
         mScoreSettings = this.getSharedPreferences("SCORE_KEY",MODE_PRIVATE);
+
+        resultat = new HashMap<>();
 
         keys = new TreeSet<>();
         mapValues = new ArrayList<>();
@@ -92,12 +94,8 @@ public class RankActivity extends AppCompatActivity {
 //        mScore3 = (TextView) findViewById(R.id.activity_rank_score4_txt);
 //        mScore4 = (TextView) findViewById(R.id.activity_rank_score5_txt);
 
-
-
         name = getIntent().getStringExtra(RANK_KEY_FIRSTNAME);
         valueScore = getIntent().getIntExtra(RANK_KEY_SCORE, 0);
-
-        resultat = new HashMap<>();
 
 
         for (int x=0;x<mPlayerSettings.getAll().size()-1;x++){
@@ -114,11 +112,7 @@ public class RankActivity extends AppCompatActivity {
         keys.addAll(resultat.keySet());
         mapValues.addAll(resultat.values());
 
-//        mAlphabet.setOnClickListener(v -> playerNames = keys.iterator());
-//        mValeur.setOnClickListener(v -> Collections.sort(mapValues));
-
-        ArrayAdapter<String> mPlayer = new ArrayAdapter<>(this, simple_list_item_1, mapValues);
-
+        final ArrayAdapter<String> mPlayer = new ArrayAdapter<>(this, simple_list_item_1, mapValues);
 
         mRanking.setAdapter(mPlayer);
 
@@ -188,6 +182,10 @@ public class RankActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         System.out.println("GameActivity::onResume()");
+
+        mAlphabet.setOnClickListener(v -> System.out.println("CLICKED !"));
+//        mAlphabet.setOnClickListener(v -> playerNames = keys.iterator());
+        mValeur.setOnClickListener(v -> Collections.sort(mapValues));
 
     }
 
