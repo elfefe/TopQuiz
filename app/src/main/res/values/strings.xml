@@ -15,4 +15,7 @@
     <string name="Back_ranking">Back</string>
     <string name="Alphabet_ranking">tri par valeurs</string>
     <string name="Valeur_ranking">tri par alphabet</string>
+    <string name="player">player</string>
+    <string name="sco_re">sco re</string>
+    <string name="score">score</string>
 </resources>
