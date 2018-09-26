@@ -7,68 +7,51 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.topquiz.elfefe.R;
-import com.topquiz.elfefe.model.Ranks;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_FIRSTNAME;
 import static com.topquiz.elfefe.controller.MainActivity.RANK_KEY_SCORE;
 
 public class RankActivity extends AppCompatActivity {
 
+    private SharedPreferences mPlayerSettings, mScoreSettings;
+
     private Button mBack, mAlphabet, mValeur;
+    private ListView mRanking;
 
     String name;
     int valueScore;
 
     private List<String> KEY_PLAYER = new ArrayList<>(5),
-            KEY_SCORE = new ArrayList<>(5);
+                         KEY_SCORE = new ArrayList<>(5);
 
-    private SharedPreferences mPlayerSettings, mScoreSettings;
-
-    List<Ranks> mData;
 
     private LinkedHashMap<String, String> resultat;
-
-    ArrayList<String> playerName = new ArrayList<>();
-    ArrayList<Integer> scoreName = new ArrayList<>();
-
-    private Iterator<String> playerNames;
-    private Iterator<String> scoreNames;
-
-    private SortedSet<String> keys;
-    private List<String> mapValues;
-
-    private ListView mRanking;
-
+    private ArrayList<String> playerName = new ArrayList<>();
+    private ArrayList<Integer> scoreName = new ArrayList<>();
     private RankAdapter mPlayer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("RankActivity::onStart()");
 
         setContentView(R.layout.activity_rank);
 
-        System.out.println("RankActivity::onStart()");
-
+        // Create two shared preference db one for the strings and the other for the integers
         mPlayerSettings = this.getSharedPreferences("PLAYER_KEY", MODE_PRIVATE);
         mScoreSettings = this.getSharedPreferences("SCORE_KEY", MODE_PRIVATE);
 
-        resultat = new LinkedHashMap<>();
+        // Get the Extras from the mainActivity
+        name = getIntent().getStringExtra(RANK_KEY_FIRSTNAME);
+        valueScore = getIntent().getIntExtra(RANK_KEY_SCORE, 0);
 
-        keys = new TreeSet<>();
-        mapValues = new ArrayList<>();
 
         setPlayerScorePreference();
 
@@ -77,11 +60,11 @@ public class RankActivity extends AppCompatActivity {
         mAlphabet = findViewById(R.id.activity_rank_alphabet_btn);
         mValeur = findViewById(R.id.activity_rank_valeur_btn);
 
-        name = getIntent().getStringExtra(RANK_KEY_FIRSTNAME);
-        valueScore = getIntent().getIntExtra(RANK_KEY_SCORE, 0);
+        // Initiate resultat with the Extras
+        setViewList();
 
+        // Make the listView with resultat data
         mPlayer = new RankAdapter(this, resultat);
-
 
         backToMain();
     }
@@ -102,27 +85,25 @@ public class RankActivity extends AppCompatActivity {
     }
 
     private void setViewList() {
-        mData = new ArrayList<>();
+        resultat = new LinkedHashMap<>();
         boolean verification = true;
         if (mPlayerSettings.getAll().size() < 5) {
             for (int x = 0; x <= mPlayerSettings.getAll().size(); x++) {
+
+                // If the shared preference cursor is empty are the same as the Extra value put the Extra value
                 if ((verification) && ((mPlayerSettings.getString(KEY_PLAYER.get(x), "").equals("")) ||
                         (mPlayerSettings.getString(KEY_PLAYER.get(x), "").equals(name)))) {
                     mPlayerSettings.edit().putString(KEY_PLAYER.get(x), name).apply();
                     mScoreSettings.edit().putInt(KEY_SCORE.get(x), valueScore).apply();
                     verification = false;
                 }
+
+                // Get the values from the Shared Preference and put them on resultat
                 playerName.add(x, mPlayerSettings.getString(KEY_PLAYER.get(x), ""));
                 scoreName.add(x, mScoreSettings.getInt(KEY_SCORE.get(x), 0));
                 String name = scoreName.get(x).toString();
 
-                Ranks ranks = new Ranks(playerName.get(x), scoreName.get(x));
-
-
                 resultat.put(playerName.get(x), name);
-
-                mData.add(x, ranks);
-
             }
         }
     }
@@ -132,8 +113,7 @@ public class RankActivity extends AppCompatActivity {
         super.onResume();
         System.out.println("RankActivity::onResume()");
 
-        setViewList();
-
+        // Sort resultat by values
         List<Map.Entry<String, String>> entries =
                 new ArrayList<>(resultat.entrySet());
         Collections.sort(entries, (a, b) -> a.getValue().compareTo(b.getValue()));
@@ -142,6 +122,7 @@ public class RankActivity extends AppCompatActivity {
             resultatByValue.put(entry.getKey(), entry.getValue());
         }
 
+        // Sort resultat by keys
         Map resultatBykey = new TreeMap(resultat);
 
         mAlphabet.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatBykey));

@@ -6,28 +6,19 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.topquiz.elfefe.R;
-import com.topquiz.elfefe.model.Ranks;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 
 public class RankAdapter extends BaseAdapter {
 
-    Map ranks;
-    LayoutInflater inflater;
+    private Map ranks;
+    private LayoutInflater inflater;
 
     public RankAdapter(@NonNull Context context, Map ranks) {
         super();
