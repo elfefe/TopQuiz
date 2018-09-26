@@ -63,8 +63,22 @@ public class RankActivity extends AppCompatActivity {
         // Initiate resultat with the Extras
         setViewList();
 
+        // Sort resultat by values
+        List<Map.Entry<String, String>> entries =
+                new ArrayList<>(resultat.entrySet());
+        Collections.sort(entries, (a, b) -> a.getValue().compareTo(b.getValue()));
+        Map<String, String> resultatByValue = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : entries) {
+            resultatByValue.put(entry.getKey(), entry.getValue());
+        }
+
+        // Sort resultat by keys
+        Map resultatBykey = new TreeMap(resultat);
+
         // Make the listView with resultat data
         mPlayer = new RankAdapter(this, resultat);
+        mAlphabet.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatBykey));
+        mValeur.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatByValue));
 
         backToMain();
     }
@@ -113,20 +127,7 @@ public class RankActivity extends AppCompatActivity {
         super.onResume();
         System.out.println("RankActivity::onResume()");
 
-        // Sort resultat by values
-        List<Map.Entry<String, String>> entries =
-                new ArrayList<>(resultat.entrySet());
-        Collections.sort(entries, (a, b) -> a.getValue().compareTo(b.getValue()));
-        Map<String, String> resultatByValue = new LinkedHashMap<>();
-        for (Map.Entry<String, String> entry : entries) {
-            resultatByValue.put(entry.getKey(), entry.getValue());
-        }
 
-        // Sort resultat by keys
-        Map resultatBykey = new TreeMap(resultat);
-
-        mAlphabet.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatBykey));
-        mValeur.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatByValue));
 
         mRanking.setAdapter(mPlayer);
 
