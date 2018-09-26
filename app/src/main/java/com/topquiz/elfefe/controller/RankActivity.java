@@ -72,6 +72,8 @@ public class RankActivity extends AppCompatActivity {
             resultatByValue.put(entry.getKey(), entry.getValue());
         }
 
+
+
         // Sort resultat by keys
         Map resultatBykey = new TreeMap(resultat);
 
@@ -79,6 +81,10 @@ public class RankActivity extends AppCompatActivity {
         mPlayer = new RankAdapter(this, resultat);
         mAlphabet.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatBykey));
         mValeur.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatByValue));
+
+
+        mAlphabet.setOnClickListener(v -> System.out.println(resultatBykey));
+        mValeur.setOnClickListener(v -> System.out.println(resultatByValue));
 
         backToMain();
     }
@@ -102,7 +108,7 @@ public class RankActivity extends AppCompatActivity {
         resultat = new LinkedHashMap<>();
         boolean verification = true;
         if (mPlayerSettings.getAll().size() < 5) {
-            for (int x = 0; x <= mPlayerSettings.getAll().size(); x++) {
+            for (int x = 0; x < mPlayerSettings.getAll().size(); x++) {
 
                 // If the shared preference cursor is empty are the same as the Extra value put the Extra value
                 if ((verification) && ((mPlayerSettings.getString(KEY_PLAYER.get(x), "").equals("")) ||
@@ -116,7 +122,6 @@ public class RankActivity extends AppCompatActivity {
                 playerName.add(x, mPlayerSettings.getString(KEY_PLAYER.get(x), ""));
                 scoreName.add(x, mScoreSettings.getInt(KEY_SCORE.get(x), 0));
                 String name = scoreName.get(x).toString();
-
                 resultat.put(playerName.get(x), name);
             }
         }
@@ -127,10 +132,10 @@ public class RankActivity extends AppCompatActivity {
         super.onResume();
         System.out.println("RankActivity::onResume()");
 
+        mPlayer.notifyDataSetChanged();
 
 
         mRanking.setAdapter(mPlayer);
-
     }
 
     public void backToMain() {
