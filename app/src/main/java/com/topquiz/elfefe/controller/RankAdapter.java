@@ -28,7 +28,10 @@ public class RankAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return ranks.size();
+        if (ranks.size() < 5)
+            return ranks.size();
+        else
+            return 5;
     }
 
     @Override
