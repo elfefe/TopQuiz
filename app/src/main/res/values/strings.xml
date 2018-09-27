@@ -18,4 +18,5 @@
     <string name="player">player</string>
     <string name="sco_re">sco re</string>
     <string name="score">score</string>
+    <string name="activity_game_answer5_btn">ANSWER5</string>
 </resources>

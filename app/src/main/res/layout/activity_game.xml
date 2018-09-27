@@ -70,5 +70,16 @@
         android:textSize="20sp"
         android:text="@string/Answer4_game"
         tools:ignore="Suspicious0dp" />
+    <Button
+        android:id="@+id/activity_game_answer5_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:textColor="@color/colorAccent"
+        android:background="@android:color/white"
+        android:textSize="20sp"
+        android:text="@string/activity_game_answer5_btn"
+        tools:ignore="Suspicious0dp" />
 
 </LinearLayout>

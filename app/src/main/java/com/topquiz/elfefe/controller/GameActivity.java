@@ -1,6 +1,5 @@
 package com.topquiz.elfefe.controller;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +24,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Button mAnswerButton2;
     private Button mAnswerButton3;
     private Button mAnswerButton4;
+    private Button mAnswerButton5;
 
     private QuestionBank mQuestionBank;
     private Question mCurrentQuestion;
@@ -59,22 +59,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mEnableTouchEvents = true;
 
         // Wire widgets
-        mQuestionTextView = (TextView) findViewById(R.id.activity_game_question_text);
-        mAnswerButton1 = (Button) findViewById(R.id.activity_game_answer1_btn);
-        mAnswerButton2 = (Button) findViewById(R.id.activity_game_answer2_btn);
-        mAnswerButton3 = (Button) findViewById(R.id.activity_game_answer3_btn);
-        mAnswerButton4 = (Button) findViewById(R.id.activity_game_answer4_btn);
+        mQuestionTextView = findViewById(R.id.activity_game_question_text);
+        mAnswerButton1 = findViewById(R.id.activity_game_answer1_btn);
+        mAnswerButton2 = findViewById(R.id.activity_game_answer2_btn);
+        mAnswerButton3 = findViewById(R.id.activity_game_answer3_btn);
+        mAnswerButton4 = findViewById(R.id.activity_game_answer4_btn);
+        mAnswerButton5 = findViewById(R.id.activity_game_answer5_btn);
 
         // Use the tag property to 'name' the buttons
         mAnswerButton1.setTag(0);
         mAnswerButton2.setTag(1);
         mAnswerButton3.setTag(2);
         mAnswerButton4.setTag(3);
+        mAnswerButton5.setTag(4);
 
         mAnswerButton1.setOnClickListener(this);
         mAnswerButton2.setOnClickListener(this);
         mAnswerButton3.setOnClickListener(this);
         mAnswerButton4.setOnClickListener(this);
+        mAnswerButton5.setOnClickListener(this);
 
         mCurrentQuestion = mQuestionBank.getQuestion();
         this.displayQuestion(mCurrentQuestion);
@@ -103,20 +106,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         mEnableTouchEvents = false;
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mEnableTouchEvents = true;
+        new Handler().postDelayed(() -> {
+            mEnableTouchEvents = true;
 
-                // If this is the last question, ends the game.
-                // Else, display the next question.
-                if (--mNumberOfQuestions == 0) {
-                    // End the game
-                    endGame();
-                } else {
-                    mCurrentQuestion = mQuestionBank.getQuestion();
-                    displayQuestion(mCurrentQuestion);
-                }
+            // If this is the last question, ends the game.
+            // Else, display the next question.
+            if (--mNumberOfQuestions == 0) {
+                // End the game
+                endGame();
+            } else {
+                mCurrentQuestion = mQuestionBank.getQuestion();
+                displayQuestion(mCurrentQuestion);
             }
         }, 2000); // LENGTH_SHORT is usually 2 second long
     }
@@ -131,15 +131,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         builder.setTitle("Well done!")
                 .setMessage("Your score is " + mScore)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // End the activity
-                        Intent intent = new Intent();
-                        intent.putExtra(BUNDLE_EXTRA_SCORE, mScore);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
+                .setPositiveButton("OK", (dialog, which) -> {
+                    // End the activity
+                    Intent intent = new Intent();
+                    intent.putExtra(BUNDLE_EXTRA_SCORE, mScore);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 })
                 .setCancelable(false)
                 .create()
@@ -152,43 +149,44 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mAnswerButton2.setText(question.getChoiceList().get(1));
         mAnswerButton3.setText(question.getChoiceList().get(2));
         mAnswerButton4.setText(question.getChoiceList().get(3));
+        mAnswerButton5.setText(question.getChoiceList().get(4));
     }
 
     private QuestionBank generateQuestions() {
         Question question1 = new Question("What is the name of the current french president?",
-                Arrays.asList("François Hollande", "Emmanuel Macron", "Jacques Chirac", "François Mitterand"),
+                Arrays.asList("François Hollande", "Emmanuel Macron", "Jacques Chirac", "François Mitterand","Nicolas Sarkozy"),
                 1);
 
         Question question2 = new Question("How many countries are there in the European Union?",
-                Arrays.asList("15", "24", "28", "32"),
+                Arrays.asList("15", "24", "28", "32","41"),
                 2);
 
         Question question3 = new Question("Who is the creator of the Android operating system?",
-                Arrays.asList("Andy Rubin", "Steve Wozniak", "Jake Wharton", "Paul Smith"),
+                Arrays.asList("Andy Rubin", "Steve Wozniak", "Jake Wharton", "Paul Smith","Arnold Schwartzenegger"),
                 0);
 
         Question question4 = new Question("When did the first man land on the moon?",
-                Arrays.asList("1958", "1962", "1967", "1969"),
+                Arrays.asList("1958", "1962", "1967", "1969","1976"),
                 3);
 
         Question question5 = new Question("What is the capital of Romania?",
-                Arrays.asList("Bucarest", "Warsaw", "Budapest", "Berlin"),
+                Arrays.asList("Bucarest", "Warsaw", "Budapest", "Berlin","Varsovie"),
                 0);
 
         Question question6 = new Question("Who did the Mona Lisa paint?",
-                Arrays.asList("Michelangelo", "Leonardo Da Vinci", "Raphael", "Carravagio"),
+                Arrays.asList("Michelangelo", "Leonardo Da Vinci", "Raphael", "Carravagio","Rembrandt"),
                 1);
 
         Question question7 = new Question("In which city is the composer Frédéric Chopin buried?",
-                Arrays.asList("Strasbourg", "Warsaw", "Paris", "Moscow"),
+                Arrays.asList("Strasbourg", "Warsaw", "Paris", "Moscow","Porto"),
                 2);
 
         Question question8 = new Question("What is the country top-level domain of Belgium?",
-                Arrays.asList(".bg", ".bm", ".bl", ".be"),
+                Arrays.asList(".bg", ".bm", ".bl", ".be",".bi"),
                 3);
 
         Question question9 = new Question("What is the house number of The Simpsons?",
-                Arrays.asList("42", "101", "666", "742"),
+                Arrays.asList("42", "101", "666", "742","33"),
                 3);
 
         return new QuestionBank(Arrays.asList(question1,

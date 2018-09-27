@@ -23,7 +23,7 @@ public class RankActivity extends AppCompatActivity {
     private SharedPreferences mPlayerSettings, mScoreSettings;
 
     private Button mBack;
-    private ListView mRanking;
+    private ListView mListViewRanking;
 
     String name;
     int valueScore;
@@ -31,10 +31,8 @@ public class RankActivity extends AppCompatActivity {
     private List<String> KEY_PLAYER = new ArrayList<>(),
                          KEY_SCORE = new ArrayList<>();
 
-    private Map<String, String> resultat;
     private ArrayList<String> playerName = new ArrayList<>();
     private ArrayList<Integer> scoreName = new ArrayList<>();
-    private RankAdapter mPlayer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,34 +49,40 @@ public class RankActivity extends AppCompatActivity {
         name = getIntent().getStringExtra(RANK_KEY_FIRSTNAME);
         valueScore = getIntent().getIntExtra(RANK_KEY_SCORE, 0);
 
-        mRanking = findViewById(R.id.listview);
+        mListViewRanking = findViewById(R.id.listview);
         mBack = findViewById(R.id.activity_rank_back_btn);
         Button mAlphabet = findViewById(R.id.activity_rank_alphabet_btn);
         Button mValeur = findViewById(R.id.activity_rank_valeur_btn);
 
-        // Initiate resultat with the Extras
-        setViewList();
+        TreeMap resultat = (TreeMap) setViewList();
 
         // Sort resultat by values
-        List<Map.Entry<String, String>> entries =
-                new ArrayList<>(resultat.entrySet());
-        Collections.sort(entries, (a, b) -> a.getValue().compareTo(b.getValue()));
+        List<Map.Entry<String, String>> entries = new ArrayList<>(resultat.entrySet());
+        Collections.sort(entries, (b, a) -> a.getValue().compareTo(b.getValue()));
         Map<String, String> resultatByValue = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : entries) {
             resultatByValue.put(entry.getKey(), entry.getValue());
         }
 
+        RankAdapter mAdapterPlayer = new RankAdapter(this, resultatByValue);
+
         // Make the listView with resultat data
-        mPlayer = new RankAdapter(this, resultat);
-        mAlphabet.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultat));
-        mValeur.setOnClickListener(v -> mPlayer = new RankAdapter(this, resultatByValue));
+        mAlphabet.setOnClickListener(v -> {
+            RankAdapter adapter = new RankAdapter(RankActivity.this, resultat);
+            mListViewRanking.setAdapter(adapter);
+        });
+        mValeur.setOnClickListener(v -> {
+            mListViewRanking.setAdapter(mAdapterPlayer);
+        });
+
+        mListViewRanking.setAdapter(mAdapterPlayer);
 
         backToMain();
     }
 
 
-    private void setViewList() {
-        resultat = new TreeMap<>();
+    private Map setViewList() {
+        Map<String,String> resultat = new TreeMap<>();
         boolean verification = true;
         int x = 0;
 
@@ -97,26 +101,20 @@ public class RankActivity extends AppCompatActivity {
             }
 
             // Get the values from the Shared Preference and put them on resultat
-
                 playerName.add(x, mPlayerSettings.getString(KEY_PLAYER.get(x), ""));
                 scoreName.add(x, mScoreSettings.getInt(KEY_SCORE.get(x), 0));
-                String names = scoreName.get(x).toString();
-                resultat.put(playerName.get(x), names);
+                String score = scoreName.get(x).toString();
+                resultat.put(playerName.get(x).toLowerCase(), score);
 
             x++;
         }while (verification);
+        return resultat;
     }
-
-
 
     @Override
     protected void onResume() {
         super.onResume();
         System.out.println("RankActivity::onResume()");
-
-        mPlayer.notifyDataSetChanged();
-
-        mRanking.setAdapter(mPlayer);
     }
 
     public void backToMain() {

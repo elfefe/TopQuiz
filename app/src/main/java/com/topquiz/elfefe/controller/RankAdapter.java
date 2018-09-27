@@ -20,7 +20,7 @@ public class RankAdapter extends BaseAdapter {
     private Map ranks;
     private LayoutInflater inflater;
 
-    public RankAdapter(@NonNull Context context, Map ranks) {
+    RankAdapter(@NonNull Context context, Map ranks) {
         super();
         inflater = LayoutInflater.from(context);
         this.ranks = ranks;
